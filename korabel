@@ -1,0 +1,55 @@
+void setup() {
+int in1 = 4;
+int in2 = 5;
+int in3 = 6;
+int in4 = 7;
+int en1 = 3;
+int en2 = 2;
+double r;
+}
+
+void loop()
+{
+  r=3;
+  if (r>30)
+  {
+    vpered ();
+  }
+  else
+  {
+    povorot ();
+  }
+}
+void vpered ()
+{
+digitalWrite (in1, HIGH);
+digitalWrite (in2, LOW);
+digitalWrite (in3, HIGH);
+digitalWrite (in4, LOW);
+analogWrite (en1, 50);
+analogWrite (en2, 50);
+delay (150);
+analogWrite (en1, 150);
+analogWrite (en2, 150);
+delay (150);
+analogWrite (en1, 255);
+analogWrite (en2, 255);  
+}
+void povorot ()
+{
+digitalWrite (in1, LOW);
+digitalWrite (in2, HIGH);
+digitalWrite (in3, HIGH);
+digitalWrite (in4, LOW);
+digitalWrite (en1, 0);
+digitalWrite (en2, 0);
+delay (50);
+analogWrite (en1, 50);
+analogWrite (en2, 50);
+delay (150);
+analogWrite (en1, 150);
+analogWrite (en2, 150);
+delay (150);
+analogWrite (en1, 0);
+analogWrite (en2, 0);
+}
