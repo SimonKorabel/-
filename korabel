@@ -1,55 +1,156 @@
-void setup() {
-int in1 = 4;
-int in2 = 5;
-int in3 = 6;
-int in4 = 7;
-int en1 = 3;
-int en2 = 2;
+uint8_t trig = 10;
+
+uint8_t echo = 11;
+
+uint8_t en1 = 9;
+
+uint8_t en2 = 3;
+
+uint8_t in1 = 7;
+
+uint8_t in2 = 6;
+
+uint8_t in3 = 5;
+
+uint8_t in4 = 4;
+
 double r;
+
+double z;
+
+void setup() {
+
+pinMode (3,OUTPUT);
+
+pinMode (4,OUTPUT);
+
+pinMode (5,OUTPUT);
+
+pinMode (6,OUTPUT);
+
+pinMode (7,OUTPUT);
+
+pinMode (9,OUTPUT);
+
+pinMode (10,OUTPUT);
+
+pinMode (11,INPUT);
+
 }
 
-void loop()
+void loop() {
+
+r = range (trig, echo);
+
+forward (50, en1, in1, in2);
+
+forward (50, en2, in3, in4);
+
+delay (100);
+
+forward (150, en1, in1, in2);
+
+forward (150, en2, in3, in4);
+
+delay (100);
+
+while (r>30)
+
 {
-  r=3;
-  if (r>30)
-  {
-    vpered ();
-  }
-  else
-  {
-    povorot ();
-  }
-}
-void vpered ()
-{
-digitalWrite (in1, HIGH);
-digitalWrite (in2, LOW);
-digitalWrite (in3, HIGH);
-digitalWrite (in4, LOW);
-analogWrite (en1, 50);
-analogWrite (en2, 50);
-delay (150);
-analogWrite (en1, 150);
-analogWrite (en2, 150);
-delay (150);
-analogWrite (en1, 255);
-analogWrite (en2, 255);  
-}
-void povorot ()
-{
-digitalWrite (in1, LOW);
-digitalWrite (in2, HIGH);
-digitalWrite (in3, HIGH);
-digitalWrite (in4, LOW);
-digitalWrite (en1, 0);
-digitalWrite (en2, 0);
+
+
+forward (255, en1, in1, in2);
+
+forward (255, en2, in3, in4);
+
 delay (50);
-analogWrite (en1, 50);
-analogWrite (en2, 50);
+
+r = range (trig, echo);
+
+}
+
+forward (150, en1, in1, in2);
+
+forward (150, en2, in3, in4);
+delay(100);
+forward (50, en1, in1, in2);
+
+forward (50, en2, in3, in4);
+delay(100);
+forward (0, en1, in1, in2);
+
+forward (0, en2, in3, in4);
+delay (100);
+forward (50, en1, in2, in1);
+
+forward (50, en2, in3, in4);
+
 delay (150);
-analogWrite (en1, 150);
-analogWrite (en2, 150);
+
+forward (150, en1, in2, in1);
+
+forward (150, en2, in3, in4);
+
 delay (150);
-analogWrite (en1, 0);
-analogWrite (en2, 0);
+
+while (r<=30)
+
+{
+
+forward (255, en1, in2, in1);
+
+forward (255, en2, in3, in4);
+
+delay (100);
+r = range (trig, echo);
+
+}
+forward (150, en1, in2, in1);
+
+forward (150, en2, in3, in4);
+
+delay (100);
+
+forward (50, en1, in2, in1);
+
+forward (50, en2, in3, in4);
+
+delay (100);
+
+forward (0, en1, in2, in1);
+
+forward (0, en2, in3, in4);
+
+delay (50);
+
+}
+
+double range (uint8_t trigPin, uint8_t echoPin) {
+
+digitalWrite(trigPin, LOW);
+
+delayMicroseconds(10);
+
+digitalWrite(trigPin, HIGH);
+
+delayMicroseconds(10);
+
+digitalWrite(trigPin, LOW);
+
+z = pulseIn(echoPin, HIGH);
+
+z = (z/2)/29.1;
+
+return z;
+
+}
+
+void forward (uint8_t power, uint8_t enPin, uint8_t posPin, uint8_t negPin) {
+
+digitalWrite (posPin, HIGH);
+
+digitalWrite (negPin, LOW);
+
+analogWrite (enPin, power);
+
 }
