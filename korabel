@@ -18,7 +18,8 @@ double r;
 
 double z;
 
-boolean v = false;
+boolean isMovingForward = false;
+boolean isMovingBack = false;
 
 void setup() {
 
@@ -42,30 +43,28 @@ pinMode (11,INPUT);
 
 void loop() {
 
-r = range (trig, echo);
+	r = range (trig, echo); // r>40 +
 
-delay (50);
+	delay (50);
 
-if (r>40) {
-  if (v == true){
-    Move (255, en1, in1, in2);
-    Move (255, en2, in3, in4);
-  }
-  else {
-    highMove (en1, in1, in2);
-    highMove (en2, in3, in4);
-  }
-}
-else {
-  if (v == true) {
-    slowMove (en1, in1, in2);
-    slowMove (en2, in3, in4);
-  }
-  else {
-    Move (255, en1, in2, in1);
-    Move (255, en2, in3, in4);
-  }
-}
+	if ( !isMovingForward && !isMovingBack && d>40 )
+	{
+		speedUp(fromCurrentSpeed, toPlusMaxSpeed); // или speedUp(from, to, step) -- чтобы вручную прописать шаг ускорения
+		isMovingForward = true;
+		isMovingBack = false; 
+	}
+	else if ( d<=40 && (isMovingForward && !isMovingBack || !isMovingForward && !isMovingBack) )
+	{
+		speedUp(fromCurrentSpeed, to MinusMaxSpeed);
+		isMovingForward = false;
+		isMovingBack = true;
+	}
+	else if ( !isMovingForward && isMovingBack && d>40 )
+	{
+		speedUp(fromCurrentSpeed, toPlusMaxSpeed); 
+		isMovingForward = true;
+		isMovingBack = false;
+	}
 
 }
 
@@ -98,17 +97,8 @@ digitalWrite (negPin, LOW);
 analogWrite (enPin, power);
 
 }
-void highMove (uint8_t enPin, uint8_t posPin, uint8_t negPin) {
-  for (uint8_t i=0; i<255; i++) {
-    Move (i, enPin, posPin, enPin);
-    delay (2);
-  }
-  v = true;
-}
-void slowMove ( uint8_t enPin, uint8_t posPin, uint8_t negPin) {
-  for (uint8_t i=255; i>0; i--) {
-    Move (i, enPin, posPin, enPin);
-    delay (2);
-  }
-  v = false;
+
+speedUp(int16_t fromSpeed, int16_t toSpeed, uint8_t step = 0)
+{
+  ...
 }
