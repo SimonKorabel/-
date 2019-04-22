@@ -14,13 +14,16 @@ uint8_t in3 = 5;
 
 uint8_t in4 = 4;
 
-double r;
+double r = 0;
 
-double z;
+double z = 0;
 
-boolean v = false;
+boolean f = false; //вперёд или назад
+
+boolean v = false; //разогнался или нет
 
 void setup() {
+Serial.begin (9600);
 
 pinMode (3,OUTPUT);
 
@@ -42,31 +45,43 @@ pinMode (11,INPUT);
 
 void loop() {
 
-r = range (trig, echo);
+r = range (trig, echo); //проверка рассояния
 
-delay (50);
-
-if (r>40) {
-  if (v == true){
-    Move (255, en1, in1, in2);
-    Move (255, en2, in3, in4);
-  }
+if (v == false) { //если не движется
+  if (r>40) {
+      forward ();
+      highspeed ();
+    }
   else {
-    highMove (en1, in1, in2);
-    highMove (en2, in3, in4);
+      right ();
+      highspeed ();
+    }
   }
+  else      { //если движется
+    if (f==true) { //если вперёд
+     if (r<40) {
+      lowspeed ();
+     }
+    }
+    else { //если назад
+      if (r>40) {
+        lowspeed ();
+        }
+        
+      }
+    }
+Serial.println(r);
+if (v==false) {
+  Serial.println ("Стоим");
 }
 else {
-  if (v == true) {
-    slowMove (en1, in1, in2);
-    slowMove (en2, in3, in4);
+  if (f==true) {
+    Serial.println ("Вперёд");
   }
   else {
-    Move (255, en1, in2, in1);
-    Move (255, en2, in3, in4);
-  }
+  Serial.println ("Назад");
 }
-
+   }
 }
 
 double range (uint8_t trigPin, uint8_t echoPin) {
@@ -83,7 +98,7 @@ digitalWrite(trigPin, LOW);
 
 z = pulseIn(echoPin, HIGH);
 
-z = (z/2)/29.1;
+z= (z/2)/29.1;
 
 return z;
 
@@ -98,17 +113,54 @@ digitalWrite (negPin, LOW);
 analogWrite (enPin, power);
 
 }
-void highMove (uint8_t enPin, uint8_t posPin, uint8_t negPin) {
+void highspeed () {
   for (uint8_t i=0; i<255; i++) {
-    Move (i, enPin, posPin, enPin);
-    delay (2);
+    analogWrite (en1,i);
+    analogWrite (en2,i);
+    if (r<20) {
+    analogWrite (en1, 0);
+    analogWrite (en2, 0);
+      break;
+    }
+    delay(1);
   }
-  v = true;
+  if (r>20) {
+    v = true;
+  }
 }
-void slowMove ( uint8_t enPin, uint8_t posPin, uint8_t negPin) {
+void lowspeed () {
   for (uint8_t i=255; i>0; i--) {
-    Move (i, enPin, posPin, enPin);
-    delay (2);
+    analogWrite (en1,i);
+    analogWrite (en2,i);
+    delay (1);
   }
   v = false;
+}
+void forward () {
+  digitalWrite (in1, HIGH);
+  digitalWrite (in2, LOW);
+  digitalWrite (in3, HIGH);
+  digitalWrite (in4, LOW);
+  f = true;
+}
+void back () {
+  digitalWrite (in2, HIGH);
+  digitalWrite (in1, LOW);
+  digitalWrite (in4, HIGH);
+  digitalWrite (in3, LOW);
+}
+void right () {
+  digitalWrite (in2, HIGH);
+  digitalWrite (in1, LOW);
+  digitalWrite (in3, HIGH);
+  digitalWrite (in4, LOW);
+  f = false;
+}
+void highspeed0 () {
+  for (uint8_t i=0; i<255; i++) {
+    analogWrite (en1,i);
+    analogWrite (en2,i);
+    delay(1);
+  }
+  v = true;
 }
